@@ -1,6 +1,7 @@
 # Clean Architecture
 
-A clean architecture is a software structure that allows developer to keep his code analysable, testable, verifiable and maintainable.
+A clean architecture is a software structure that allows developer to keep his code analysable, testable, verifiable and
+maintainable.
 
 Robert C. Martin propose that architecture as a layered organization with well-defined responsibilities.
 

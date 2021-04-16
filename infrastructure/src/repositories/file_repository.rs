@@ -17,7 +17,6 @@ impl FileRepository {
 }
 
 impl AddUserPort for FileRepository {
-
     ///
     /// Add user details in file (actually, erasing file content each time this function is called)
     ///
@@ -50,7 +49,7 @@ impl AddUserPort for FileRepository {
                     let error_message = format!("An error occured while creating directories {} : {}", d.display(), e);
                     let error = AddUserError::new(String::from(error_message));
                     return Err(error);
-                },
+                }
                 Ok(_) => println!("Directories {} created", d.display()),
             },
             None => println!("No parents directories to create")

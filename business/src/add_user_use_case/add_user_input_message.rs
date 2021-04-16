@@ -7,7 +7,6 @@ pub struct AddUserInputMessage {
 }
 
 impl AddUserInputMessage {
-
     /// Create a new AddUserInputMessage
     ///
     /// # Examples

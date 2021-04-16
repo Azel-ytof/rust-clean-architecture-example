@@ -1,4 +1,5 @@
 use domain::entities::user_entity::UserEntity;
+
 use crate::OutputMessage;
 
 pub struct AddUserOutputMessage {

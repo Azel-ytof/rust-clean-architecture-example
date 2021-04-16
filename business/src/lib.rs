@@ -1,8 +1,9 @@
-pub mod add_user_use_case;
-
 use domain::errors::add_user_error::AddUserError;
 
+pub mod add_user_use_case;
+
 pub trait InputMessage {}
+
 pub trait OutputMessage {}
 
 pub trait InputBoundary<T>

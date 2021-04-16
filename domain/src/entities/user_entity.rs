@@ -5,7 +5,6 @@ pub struct UserEntity {
 }
 
 impl UserEntity {
-
     /// Create a new UserEntity
     ///
     /// # Examples

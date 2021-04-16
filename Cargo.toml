@@ -11,3 +11,4 @@ edition = "2018"
 domain = { path = "domain" }
 business = { path = "business" }
 infrastructure = { path = "infrastructure" }
+application = { path = "application" }

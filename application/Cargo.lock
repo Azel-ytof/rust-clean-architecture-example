@@ -27,13 +27,3 @@ dependencies = [
  "business",
  "domain",
 ]
-
-[[package]]
-name = "rust-clean-architecture-example"
-version = "0.1.0"
-dependencies = [
- "application",
- "business",
- "domain",
- "infrastructure",
-]

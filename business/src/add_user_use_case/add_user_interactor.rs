@@ -1,7 +1,8 @@
-use crate::{InputBoundary, OutputBoundary};
-use crate::add_user_use_case::add_user_output_message::AddUserOutputMessage;
-use crate::add_user_use_case::add_user_input_message::AddUserInputMessage;
 use domain::ports::add_user_port::AddUserPort;
+
+use crate::{InputBoundary, OutputBoundary};
+use crate::add_user_use_case::add_user_input_message::AddUserInputMessage;
+use crate::add_user_use_case::add_user_output_message::AddUserOutputMessage;
 
 pub struct AddUserInteractor {
     presenter: Box<dyn OutputBoundary<AddUserOutputMessage>>,
@@ -33,7 +34,7 @@ impl InputBoundary<AddUserInputMessage> for AddUserInteractor
             Err(e) => {
                 self.presenter.error(&self.output_message, e);
                 return;
-            },
+            }
         }
 
         self.presenter.success(&self.output_message);
