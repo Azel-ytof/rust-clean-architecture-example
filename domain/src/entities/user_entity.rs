@@ -1,6 +1,6 @@
 pub struct UserEntity {
-    lastname: String,
-    firstname: String,
+    last_name: String,
+    first_name: String,
     email: String,
 }
 
@@ -20,11 +20,23 @@ impl UserEntity {
     /// let user = UserEntity::new(last_name, first_name, email);
     /// ```
     ///
-    pub fn new(lastname: String, firstname: String, email: String) -> Self {
+    pub fn new(last_name: String, first_name: String, email: String) -> Self {
         Self {
-            lastname,
-            firstname,
+            last_name,
+            first_name,
             email,
         }
+    }
+
+    pub fn get_last_name(&self) -> &String {
+        &self.last_name
+    }
+
+    pub fn get_first_name(&self) -> &String {
+        &self.first_name
+    }
+
+    pub fn get_email(&self) -> &String {
+        &self.email
     }
 }
