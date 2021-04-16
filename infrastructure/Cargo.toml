@@ -1,5 +1,5 @@
 [package]
-name = "business"
+name = "infrastructure"
 version = "0.1.0"
 authors = ["Azel-ytof"]
 edition = "2018"
@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 
 domain = { path = "../domain" }
+business = { path = "../business" }

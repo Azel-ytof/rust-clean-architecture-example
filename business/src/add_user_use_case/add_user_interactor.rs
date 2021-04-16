@@ -26,9 +26,15 @@ impl InputBoundary<AddUserInputMessage> for AddUserInteractor
         let first_name = message.get_first_name();
         let email = message.get_email();
 
-        let user = self.add_user_repository.add_user(&last_name, &first_name, &email);
+        let result_user = self.add_user_repository.add_user(&last_name, &first_name, &email);
 
-        self.output_message.set_user(user);
+        match result_user {
+            Ok(u) => self.output_message.set_user(u),
+            Err(e) => {
+                self.presenter.error(&self.output_message, e);
+                return;
+            },
+        }
 
         self.presenter.success(&self.output_message);
     }
