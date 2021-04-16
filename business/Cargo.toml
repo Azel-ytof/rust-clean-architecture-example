@@ -1,5 +1,5 @@
 [package]
-name = "rust-clean-architecture-example"
+name = "business"
 version = "0.1.0"
 authors = ["tony.0621@hotmail.fr <Thony.0621>"]
 edition = "2018"
@@ -8,5 +8,4 @@ edition = "2018"
 
 [dependencies]
 
-domain = { path = "domain" }
-business = { path = "business" }
+domain = { path = "../domain" }
