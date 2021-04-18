@@ -20,3 +20,7 @@ My application is composed of 4 parts :
 2. Business : Contains use cases
 3. Infrastructure : Contains repositories (that allows to use dependencies)
 4. Application : Contains presenters, view model
+
+## Example in Java
+
+I've wrote the equivalent of this architecture in Java : <https://github.com/Azel-ytof/java-clean-architecture-example>
