@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 
-domain = { path = "domain" }
-business = { path = "business" }
-infrastructure = { path = "infrastructure" }
-application = { path = "application" }
+domain = { path = "../domain" }
+business = { path = "../business" }
+infrastructure = { path = "../infrastructure" }
+application = { path = "../application" }
