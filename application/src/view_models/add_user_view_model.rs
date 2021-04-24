@@ -16,12 +16,12 @@ impl AddUserViewModel {
         }
     }
 
-    pub fn get_user(&self) -> &Option<UserEntity> {
-        &self.user
+    pub fn get_user(&self) -> Option<UserEntity> {
+        self.user
     }
 
-    pub fn get_error(&self) -> &Option<AddUserError> {
-        &self.error
+    pub fn get_error(&self) -> Option<AddUserError> {
+        self.error
     }
 }
 

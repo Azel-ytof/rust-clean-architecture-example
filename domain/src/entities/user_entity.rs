@@ -1,3 +1,6 @@
+use std::fmt::{Display, Formatter, Error};
+
+#[derive(Clone, Debug)]
 pub struct UserEntity {
     last_name: String,
     first_name: String,
@@ -37,5 +40,11 @@ impl UserEntity {
 
     pub fn get_email(&self) -> &String {
         &self.email
+    }
+}
+
+impl Display for UserEntity {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        writeln!(f, "The user {} {} have email : {}", self.last_name, self.first_name, self.email)
     }
 }

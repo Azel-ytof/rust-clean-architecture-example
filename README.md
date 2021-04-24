@@ -24,3 +24,8 @@ My application is composed of 4 parts :
 ## Example in Java
 
 I've wrote the equivalent of this architecture in Java : <https://github.com/Azel-ytof/java-clean-architecture-example>
+
+## Links
+
+<https://cheats.rs/>
+<https://rust-unofficial.github.io/patterns/>

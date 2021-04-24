@@ -32,11 +32,11 @@ impl InputBoundary<AddUserInputMessage> for AddUserInteractor
         match result_user {
             Ok(u) => self.output_message.set_user(u),
             Err(e) => {
-                self.presenter.error(&self.output_message, e);
+                self.presenter.error(self.output_message, e);
                 return;
             }
         }
 
-        self.presenter.success(&self.output_message);
+        self.presenter.success(self.output_message);
     }
 }

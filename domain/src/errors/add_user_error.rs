@@ -1,5 +1,4 @@
-use std::{error::Error, fmt};
-use std::fmt::Formatter;
+use std::fmt::{Display, Formatter, Error};
 
 #[derive(Debug)]
 pub struct AddUserError {
@@ -14,10 +13,10 @@ impl AddUserError {
     }
 }
 
-impl Error for AddUserError {}
+impl std::error::Error for AddUserError {}
 
-impl fmt::Display for AddUserError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl Display for AddUserError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         let message = format!("A problem occurred while adding a new user : {}", self.error_message);
         write!(f, "{}", message)
     }

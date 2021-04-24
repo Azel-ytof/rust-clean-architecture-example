@@ -17,12 +17,12 @@ impl AddUserPresenter {
 }
 
 impl OutputBoundary<AddUserOutputMessage> for AddUserPresenter {
-    fn success(&mut self, message: &AddUserOutputMessage) {
+    fn success(&mut self, message: AddUserOutputMessage) {
         let view_model = AddUserViewModel::new(message.get_user(), None);
         self.view_model = Some(view_model);
     }
 
-    fn error(&mut self, message: &AddUserOutputMessage, error: AddUserError) {
+    fn error(&mut self, message: AddUserOutputMessage, error: AddUserError) {
         let view_model = AddUserViewModel::new(message.get_user(), Some(error));
         self.view_model = Some(view_model);
     }

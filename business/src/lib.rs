@@ -17,6 +17,6 @@ pub trait OutputBoundary<T>
     where
         T: OutputMessage,
 {
-    fn success(&mut self, message: &T);
-    fn error(&mut self, message: &T, error: AddUserError);
+    fn success(&mut self, message: T);
+    fn error(&mut self, message: T, error: AddUserError);
 }
