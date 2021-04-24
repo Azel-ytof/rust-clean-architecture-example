@@ -4,16 +4,16 @@
 name = "application"
 version = "0.1.0"
 dependencies = [
- "business",
- "domain",
- "infrastructure",
+    "business",
+    "domain",
+    "infrastructure",
 ]
 
 [[package]]
 name = "business"
 version = "0.1.0"
 dependencies = [
- "domain",
+    "domain",
 ]
 
 [[package]]
@@ -24,16 +24,16 @@ version = "0.1.0"
 name = "infrastructure"
 version = "0.1.0"
 dependencies = [
- "business",
- "domain",
+    "business",
+    "domain",
 ]
 
 [[package]]
 name = "rust-clean-architecture-example"
 version = "0.1.0"
 dependencies = [
- "application",
- "business",
- "domain",
- "infrastructure",
+    "application",
+    "business",
+    "domain",
+    "infrastructure",
 ]

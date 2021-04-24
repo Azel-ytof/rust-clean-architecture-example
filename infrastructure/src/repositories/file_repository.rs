@@ -59,7 +59,7 @@ impl AddUserPort for FileRepository {
                     let error = AddUserError::new(String::from(error_message));
                     return Err(error);
                 }
-                Ok(_) => println!("Directories {} created", d.display()),
+                _ => (),
             },
             None => println!("No parents directories to create"),
         }

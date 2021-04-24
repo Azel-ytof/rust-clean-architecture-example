@@ -1,9 +1,12 @@
+use std::rc::Rc;
+
 use domain::entities::user_entity::UserEntity;
 
 use crate::OutputMessage;
 
+#[derive(Clone)]
 pub struct AddUserOutputMessage {
-    user: Option<UserEntity>
+    user: Option<Rc<UserEntity>>
 }
 
 impl AddUserOutputMessage {
@@ -13,12 +16,12 @@ impl AddUserOutputMessage {
         }
     }
 
-    pub fn get_user(self) -> Option<UserEntity> {
+    pub fn get_user(self) -> Option<Rc<UserEntity>> {
         self.user
     }
 
     pub fn set_user(&mut self, user: UserEntity) {
-        self.user = Some(user);
+        self.user = Some(Rc::new(user));
     }
 }
 
