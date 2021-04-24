@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "clean-architecture",
+    "application",
+    "business",
+    "domain",
+    "infrastructure",
+]
