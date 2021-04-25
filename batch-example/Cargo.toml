@@ -1,5 +1,5 @@
 [package]
-name = "application"
+name = "batch-example"
 version = "0.1.0"
 authors = ["Azel-ytof"]
 edition = "2018"
@@ -11,3 +11,4 @@ edition = "2018"
 domain = { path = "../domain" }
 business = { path = "../business" }
 infrastructure = { path = "../infrastructure" }
+application = { path = "../application" }

@@ -10,6 +10,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "batch-example"
+version = "0.1.0"
+dependencies = [
+ "application",
+ "business",
+ "domain",
+ "infrastructure",
+]
+
+[[package]]
 name = "business"
 version = "0.1.0"
 dependencies = [
@@ -29,7 +39,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-clean-architecture-example"
+name = "webservice-example"
 version = "0.1.0"
 dependencies = [
  "application",

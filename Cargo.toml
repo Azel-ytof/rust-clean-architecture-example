@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "clean-architecture",
+    "batch-example",
+    "webservice-example",
     "application",
     "business",
     "domain",

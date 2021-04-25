@@ -1,5 +1,5 @@
 [package]
-name = "rust-clean-architecture-example"
+name = "webservice-example"
 version = "0.1.0"
 authors = ["Azel-ytof"]
 edition = "2018"
