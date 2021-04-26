@@ -3,15 +3,16 @@ use domain::ports::add_user_port::AddUserPort;
 use crate::{InputBoundary, OutputBoundary};
 use crate::add_user_use_case::add_user_input_message::AddUserInputMessage;
 use crate::add_user_use_case::add_user_output_message::AddUserOutputMessage;
+use domain::errors::add_user_error::AddUserError;
 
 pub struct AddUserInteractor {
-    presenter: Box<dyn OutputBoundary<AddUserOutputMessage>>,
+    presenter: Box<dyn OutputBoundary<AddUserOutputMessage, AddUserError>>,
     add_user_repository: Box<dyn AddUserPort>,
     output_message: AddUserOutputMessage,
 }
 
 impl AddUserInteractor {
-    pub fn new(presenter: Box<dyn OutputBoundary<AddUserOutputMessage>>, add_user_repository: Box<dyn AddUserPort>) -> Self {
+    pub fn new(presenter: Box<dyn OutputBoundary<AddUserOutputMessage, AddUserError>>, add_user_repository: Box<dyn AddUserPort>) -> Self {
         Self {
             presenter,
             add_user_repository,

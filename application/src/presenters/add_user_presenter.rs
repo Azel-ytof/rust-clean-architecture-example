@@ -16,7 +16,7 @@ impl AddUserPresenter {
     }
 }
 
-impl OutputBoundary<AddUserOutputMessage> for AddUserPresenter {
+impl OutputBoundary<AddUserOutputMessage, AddUserError> for AddUserPresenter {
     fn success(&mut self, message: AddUserOutputMessage) {
         let view_model = AddUserViewModel::new(message.get_user(), None);
         self.view_model = Some(view_model);

@@ -1,4 +1,4 @@
-use domain::errors::add_user_error::AddUserError;
+use std::error::Error;
 
 pub mod add_user_use_case;
 
@@ -13,10 +13,11 @@ pub trait InputBoundary<T>
     fn execute(&mut self, message: T);
 }
 
-pub trait OutputBoundary<T>
+pub trait OutputBoundary<T, V>
     where
         T: OutputMessage,
+        V: Error,
 {
     fn success(&mut self, message: T);
-    fn error(&mut self, message: T, error: AddUserError);
+    fn error(&mut self, message: T, error: V);
 }
