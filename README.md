@@ -27,5 +27,5 @@ I've wrote the equivalent of this architecture in Java : <https://github.com/Aze
 
 ## Links
 
-<https://cheats.rs/>
-<https://rust-unofficial.github.io/patterns/>
+- <https://cheats.rs/>
+- <https://rust-unofficial.github.io/patterns/>
