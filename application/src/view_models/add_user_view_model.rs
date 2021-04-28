@@ -29,10 +29,10 @@ impl AddUserViewModel {
 
 impl ViewModel for AddUserViewModel {
     fn is_success(&self) -> bool {
-        self.error.is_some()
+        self.error.is_none()
     }
 
     fn is_error(&self) -> bool {
-        self.error.is_none()
+        self.error.is_some()
     }
 }
