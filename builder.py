@@ -2,12 +2,12 @@ import getopt
 import os
 import sys
 
-USAGE = f"Usage : python {sys.argv[0]} [-h, --help] [-d, --dir <target_dir>] [-f, --force] <usecase> [<usecase>, ...]\n" \
+USAGE = f"Usage : python {sys.argv[0]} [-h, --help] [-d, --dir <target_dir>] [-p, --project <project-name>] [-f, --force] <usecase> [<usecase>, ...]\n" \
         + "    -h, --help               Print command details\n" \
         + "    -d, --dir <target_dir>   Specify the target dir to use (create it if not exists)\n" \
         + "                             Default value is current directory\n" \
         + "    -f, --force              Force overwriting existing use case\n" \
-        + "    -p, --project-name       Project name (use for Cargo initialization if not exists) in snake_case\n"
+        + "    -p, --project            Project name (use for Cargo initialization if not exists) in snake_case\n"
 
 
 def main():
@@ -30,10 +30,6 @@ def main():
             check_use_case_in_readme(target_path, use_case, force_overwriting)
             add_use_case_to_readme(target_path, use_case)
 
-        init_domain(target_path)
-        init_infrastructure(target_path)
-
-        for use_case in use_cases:
             init_business(target_path, use_case)
             init_application(target_path, use_case)
 
@@ -43,7 +39,7 @@ def main():
 
 
 def parse_args():
-    options, arguments = getopt.getopt(sys.argv[1:], "hp:d:f", ["help", "project-name=", "dir=", "force"])
+    options, arguments = getopt.getopt(sys.argv[1:], "hp:d:f", ["help", "project=", "dir=", "force"])
 
     project_name = ""
     target_dir = os.getcwd()
@@ -79,13 +75,32 @@ def check_upper_case(string, element):
 
 def check_use_case_in_readme(target_path, use_case, force_overwriting):
     file = open(os.path.join(target_path, "README.md"), 'r')
-    if use_case in file.read() and not force_overwriting :
-        raise Exception(f'Use case {use_case} already exists.\nUse "-f" to overwrite existing files.')
+    if use_case in file.read() and not force_overwriting:
+        raise UsageError(f'Use case {use_case} already exists.\nUse "-f" to overwrite existing files.')
 
 
 def add_use_case_to_readme(target_path, use_case):
+    root_use_case = use_case.split('_')[-1]
+    readme_path = os.path.join(target_path, "README.md")
+
     print(f'Adding "{use_case}" to file "{os.path.join(target_path, "README.md")}"')
-    file_with_content(os.path.join(target_path, "README.md"), [f'{use_case} : Explain here the goal', ''], 'a')
+
+    file = open(readme_path, 'r')
+    contents = file.readlines()
+
+    if f'### {root_use_case} use cases' in contents:
+        print("root use case found : append it")
+        for index, line in enumerate(contents):
+            if f'### {root_use_case} use cases' in line:
+                contents.insert(index + 1, f'\n{use_case} : Explain here the goal')
+                break
+    else:
+        print("root use case not found : adding it")
+        contents.append(f'### {root_use_case} use cases')
+        contents.append('')
+        contents.append(f'{use_case} : Explain here the goal')
+
+    file_with_content(readme_path, contents, 'w')
 
 
 def init_cargo(target_path):
@@ -95,6 +110,8 @@ def init_cargo(target_path):
     domain_path = os.path.join(target_path, "domain")
     if not os.path.exists(domain_path):
         os.system(f'cargo new --lib {domain_path}')
+
+        init_domain(target_path)
 
     business_path = os.path.join(target_path, "business")
     if not os.path.exists(business_path):
@@ -133,6 +150,8 @@ def init_cargo(target_path):
             'a'
         )
 
+        init_infrastructure(target_path)
+
     application_path = os.path.join(target_path, "application")
     if not os.path.exists(application_path):
         os.system(f'cargo new --lib {application_path}')
@@ -146,6 +165,13 @@ def init_cargo(target_path):
                 ''
             ],
             'a'
+        )
+
+        create_directory(os.path.join(application_path, "src", "presenters"))
+        create_directory(os.path.join(application_path, "src", "view_models"))
+
+        file_with_content(
+            os.path.join(application_path, "lib.rs"), [f'pub mod presenters;', f'pub mod view_models;'], 'a'
         )
 
         file_with_content(
@@ -215,94 +241,84 @@ def init_domain(target_path):
 
 
 def init_business(target_path, use_case):
+    root_use_case = use_case.split('_')[-1]
+    root_use_case_camel_case = to_camel_case(root_use_case)
     use_case_camel_case = to_camel_case(use_case)
-    use_case_input_message = f'{use_case}_input_message'
     use_case_interactor = f'{use_case}_interactor'
-    use_case_output_message = f'{use_case}_output_message'
     business_path = os.path.join(target_path, "business", "src")
     use_case_path = os.path.join(business_path, f'{use_case}_use_case')
 
     create_directory(use_case_path)
 
     file_with_content(
-        os.path.join(business_path, "lib.rs"), [f'pub mod {use_case}_use_case;'], 'a'
+        os.path.join(business_path, "lib.rs"), [f'pub mod {root_use_case}_use_case;'], 'a'
     )
-    file_with_content(
-        os.path.join(business_path, f'{use_case}_use_case.rs'),
-        [
-            f'pub mod {use_case_input_message};',
-            f'pub mod {use_case_interactor};',
-            f'pub mod {use_case_output_message};'
-        ],
-        'w'
-    )
-    file_with_content(
-        os.path.join(use_case_path, f'{use_case_input_message}.rs'),
-        [
-            'use crate::InputMessage;',
-            '',
-            f'pub struct {use_case_camel_case}InputMessage {{}}',
-            '',
-            f'impl {use_case_camel_case}InputMessage {{',
-            '   pub fn new() -> Self { Self{} }',
-            '}',
-            '',
-            f'impl InputMessage for {use_case_camel_case}InputMessage {{}}',
-        ],
-        'w'
-    )
+
+    root_use_case_lib_path = os.path.join(business_path, f'{root_use_case}_use_case.rs')
+
+    if not os.path.exists(root_use_case_lib_path):
+        file_with_content(
+            os.path.join(business_path, f'{root_use_case}_use_case.rs'),
+            [
+                '// use std::rc::Rc;',
+                'use crate::InputMessage;',
+                'use crate::OutputMessage;',
+                f'pub struct {root_use_case_camel_case}InputMessage {{}}',
+                f'impl {root_use_case_camel_case}InputMessage {{',
+                '   pub fn new() -> Self {Self {}}',
+                '   // getters',
+                '}',
+                f'impl InputMessage for {root_use_case_camel_case}InputMessage {{}}',
+                '#[derive(Clone)]',
+                f'pub struct {root_use_case_camel_case}OutputMessage {{',
+                '   // my_entity: Option<Rc<MyEntity>>,',
+                '}}',
+                f'impl {root_use_case_camel_case}OutputMessage {{',
+                '    pub fn new() -> Self {',
+                '        Self {',
+                '            //my_entity: None',
+                '        }',
+                '    }',
+                '   // Getter and setter',
+                '}',
+                f'impl OutputMessage for {root_use_case_camel_case}OutputMessage {{}}',
+            ],
+            'w'
+        )
+
+    file_with_content(os.path.join(business_path, f'{root_use_case}_use_case.rs'), [f'pub mod {use_case_interactor};'],
+                      'a')
+
     file_with_content(
         os.path.join(use_case_path, f'{use_case_interactor}.rs'),
         [
             'use crate::{InputBoundary, OutputBoundary};',
-            f'use crate::{use_case}_use_case::{use_case}_input_message::{use_case_camel_case}InputMessage;',
-            f'use crate::{use_case}_use_case::{use_case}_output_message::{use_case_camel_case}OutputMessage;',
+            f'use crate::{root_use_case}_use_case::{{{root_use_case_camel_case}InputMessage, {root_use_case_camel_case}OutputMessage}};',
             '',
             f'pub struct {use_case_camel_case}Interactor {{',
             '   // Change generic exception with a specific exception',
-            f'  presenter: Box<dyn OutputBoundary<{use_case_camel_case}OutputMessage, std::fmt::Error>>,',
-            f'  output_message: {use_case_camel_case}OutputMessage,',
+            f'  presenter: Box<dyn OutputBoundary<{root_use_case_camel_case}OutputMessage, std::fmt::Error>>,',
+            f'  output_message: {root_use_case_camel_case}OutputMessage,',
             '   // Add repositories : my_repository: Box<dyn MyPort>,',
             '}',
             '',
             f'impl {use_case_camel_case}Interactor {{'
-            f'   pub fn new(presenter: Box<dyn OutputBoundary<{use_case_camel_case}OutputMessage, std::fmt::Error>>) -> Self {{',
+            f'   pub fn new(presenter: Box<dyn OutputBoundary<{root_use_case_camel_case}OutputMessage, std::fmt::Error>>) -> Self {{',
             '       Self {',
             '           presenter,',
-            f'          output_message: {use_case_camel_case}OutputMessage::new(),',
+            f'          output_message: {root_use_case_camel_case}OutputMessage::new(),',
             '           // Add repositories',
             '       }',
             '   }',
             '}',
             '',
-            f'impl InputBoundary<{use_case_camel_case}InputMessage> for {use_case_camel_case}Interactor {{',
-            f'  fn execute(&mut self, message: {use_case_camel_case}InputMessage) {{',
+            f'impl InputBoundary<{root_use_case_camel_case}InputMessage> for {use_case_camel_case}Interactor {{',
+            f'  fn execute(&mut self, message: {root_use_case_camel_case}InputMessage) {{',
             '       // Business processing',
             '       // If error : self.presenter.error(self.output_message.clone(), e);',
             '       self.presenter.success(self.output_message.clone());',
             '   }',
             '}',
-        ],
-        'w'
-    )
-    file_with_content(
-        os.path.join(use_case_path, f'{use_case_output_message}.rs'),
-        [
-            '// use std::rc::Rc;',
-            'use crate::OutputMessage;',
-            '',
-            '#[derive(Clone)]',
-            f'pub struct {use_case_camel_case}OutputMessage {{',
-            '   // my_entity: Option<Rc<MyEntity>>',
-            '}',
-            '',
-            f'impl {use_case_camel_case}OutputMessage {{',
-            '   pub fn new() -> Self {',
-            '       Self {}',
-            '   }',
-            '}',
-            '',
-            f'impl OutputMessage for {use_case_camel_case}OutputMessage {{}}',
         ],
         'w'
     )
@@ -325,19 +341,14 @@ def init_infrastructure(target_path):
 
 
 def init_application(target_path, use_case):
-    use_case_camel_case = to_camel_case(use_case)
-    use_case_presenter = f'{use_case}_presenter'
-    use_case_view_model = f'{use_case}_view_model'
+    root_use_case = use_case.split('_')[-1]
+    root_use_case_camel_case = to_camel_case(root_use_case)
+    use_case_presenter = f'{root_use_case}_presenter'
+    use_case_view_model = f'{root_use_case}_view_model'
     application_path = os.path.join(target_path, "application", "src")
     presenters_path = os.path.join(application_path, "presenters")
     view_models_path = os.path.join(application_path, "view_models")
 
-    create_directory(presenters_path)
-    create_directory(view_models_path)
-
-    file_with_content(
-        os.path.join(application_path, "lib.rs"), [f'pub mod presenters;', f'pub mod view_models;'], 'a'
-    )
     file_with_content(
         os.path.join(application_path, "presenters.rs"),
         [f'pub mod {use_case_presenter};'],
@@ -351,14 +362,14 @@ def init_application(target_path, use_case):
     file_with_content(
         os.path.join(view_models_path, f'{use_case_view_model}.rs'),
         [
-            'use std::rc::Rc;',
+            '//use std::rc::Rc;',
             f'use crate::view_models::ViewModel;',
-            f'pub struct {use_case_camel_case}ViewModel {{',
+            f'pub struct {root_use_case_camel_case}ViewModel {{',
             '    // my_entity: Option<Rc<MyEntity>>,',
             f'    error: Option<std::fmt::Error>, // Change generic error by a specific error',
             '}',
             '',
-            f'impl {use_case_camel_case}ViewModel {{',
+            f'impl {root_use_case_camel_case}ViewModel {{',
             f'  pub fn new(error: Option<std::fmt::Error>) -> Self {{',
             '       Self {',
             '           // my_entity,',
@@ -370,7 +381,7 @@ def init_application(target_path, use_case):
             '   }',
             '}',
             '',
-            f'impl ViewModel for {use_case_camel_case}ViewModel {{'
+            f'impl ViewModel for {root_use_case_camel_case}ViewModel {{'
             '   fn is_success(&self) -> bool {',
             '       self.error.is_none()',
             '   }',
@@ -379,40 +390,40 @@ def init_application(target_path, use_case):
             '   }',
             '}',
         ],
-        'a'
+        'w'
     )
     file_with_content(
         os.path.join(presenters_path, f'{use_case_presenter}.rs'),
         [
-            f'use business::{use_case}_use_case::{use_case}_output_message::{use_case_camel_case}OutputMessage;',
+            f'use business::{use_case}_use_case::{use_case}_output_message::{root_use_case_camel_case}OutputMessage;',
             'use business::OutputBoundary;',
-            f'use crate::view_models::{use_case}_view_model::{use_case_camel_case}ViewModel;',
+            f'use crate::view_models::{use_case}_view_model::{root_use_case_camel_case}ViewModel;',
             '',
-            f'pub struct {use_case_camel_case}Presenter {{',
-            f'  view_model: Option<{use_case_camel_case}ViewModel>',
+            f'pub struct {root_use_case_camel_case}Presenter {{',
+            f'  view_model: Option<{root_use_case_camel_case}ViewModel>',
             '}',
             '',
-            f'impl {use_case_camel_case}Presenter {{',
+            f'impl {root_use_case_camel_case}Presenter {{',
             '   pub fn new() -> Self {',
             '       Self { view_model: None }',
             '   }',
             '}',
             '',
-            f'impl OutputBoundary<{use_case_camel_case}OutputMessage, std::fmt::Error> for {use_case_camel_case}Presenter {{',
-            f'  fn success(&mut self, message: {use_case_camel_case}OutputMessage) {{',
+            f'impl OutputBoundary<{root_use_case_camel_case}OutputMessage, std::fmt::Error> for {root_use_case_camel_case}Presenter {{',
+            f'  fn success(&mut self, message: {root_use_case_camel_case}OutputMessage) {{',
             '       // first argument may be : message.get_my_entity()'
-            f'      let view_model = {use_case_camel_case}ViewModel::new(, None);',
+            f'      let view_model = {root_use_case_camel_case}ViewModel::new(, None);',
             '       self.view_model = Some(view_model);',
             '   }',
             '',
-            f'  fn error(&mut self, message: {use_case_camel_case}OutputMessage, error: std::fmt::Error) {{',
+            f'  fn error(&mut self, message: {root_use_case_camel_case}OutputMessage, error: std::fmt::Error) {{',
             '       // first argument may be : message.get_my_entity()'
-            f'      let view_model = {use_case_camel_case}ViewModel::new(Some(error));',
+            f'      let view_model = {root_use_case_camel_case}ViewModel::new(Some(error));',
             '       self.view_model = Some(view_model);',
             '   }',
             '}',
         ],
-        'a'
+        'w'
     )
 
 

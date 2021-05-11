@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-use domain::entities::user_entity::UserEntity;
+use domain::entities::user_entity::{UserEntity, Address};
 use domain::errors::add_user_error::AddUserError;
 use domain::ports::add_user_port::AddUserPort;
 
@@ -17,35 +17,14 @@ impl FileRepository {
 }
 
 impl AddUserPort for FileRepository {
-    ///
-    /// Add user details in file (actually, erasing file content each time this function is called)
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::path::Path;
-    /// use domain::ports::add_user_port::AddUserPort;
-    /// use infrastructure::repositories::file_repository::FileRepository;
-    ///
-    /// let file_path = String::from("tmp/tmp_file_test.csv");
-    /// let file_repository = FileRepository::new(file_path.clone());
-    ///
-    /// let last_name = String::from("Last Name Example");
-    /// let first_name = String::from("First Name Example");
-    /// let email = String::from("email@example.com");
-    /// let result = file_repository.add_user(&last_name, &first_name, &email);
-    ///
-    /// assert!(Path::new(&file_path).exists())
-    ///
-    /// ```
-    ///
     fn add_user(
         &self,
         last_name: &String,
         first_name: &String,
         email: &String,
+        address: &Box<dyn Address>,
     ) -> Result<UserEntity, AddUserError> {
-        let content = format!("{};{};{}", last_name, first_name, email);
+        let content = format!("{};{};{};{}", last_name, first_name, email, address.to_string());
         let file_path = Path::new(&self.file_path);
 
         match file_path.parent() {
@@ -89,6 +68,7 @@ impl AddUserPort for FileRepository {
                 last_name.clone(),
                 first_name.clone(),
                 email.clone(),
+                address.clone(),
             )),
         }
     }
